@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GREEN-API Test Task</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button, textarea { display: block; margin: 10px 0; width: 100%; }
+        textarea { height: 150px; }
+        .readonly { background-color: #e9e9e9; }
+    </style>
+</head>
+<body>
+    <h1>GREEN-API Test Task</h1>
+    <label for="idInstance">idInstance:</label>
+    <input type="text" id="idInstance" placeholder="Enter your idInstance">
+    <label for="apiToken">ApiTokenInstance:</label>
+    <input type="text" id="apiToken" placeholder="Enter your ApiTokenInstance">
+    <button onclick="getSettings()">getSettings</button>
+    <button onclick="getStateInstance()">getStateInstance</button>
+    <button onclick="sendMessage()">sendMessage</button>
+    <button onclick="sendFileByUrl()">sendFileByUrl</button>
+    <h2>Response:</h2>
+    <textarea id="response" class="readonly" readonly></textarea>
+    <script>
+        const apiUrl = 'https://api.green-api.com/';
+        
+        async function getSettings() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiToken').value;
+            if (!idInstance || !apiTokenInstance) return alert('Please enter both idInstance and ApiTokenInstance');
+            const response = await fetch(`${apiUrl}waInstance${idInstance}/getSettings/${apiTokenInstance}`);
+            const data = await response.json();
+            document.getElementById('response').value = JSON.stringify(data, null, 2);
+        }
+
+        async function getStateInstance() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiToken').value;
+            if (!idInstance || !apiTokenInstance) return alert('Please enter both idInstance and ApiTokenInstance');
+            const response = await fetch(`${apiUrl}waInstance${idInstance}/getStateInstance/${apiTokenInstance}`);
+            const data = await response.json();
+            document.getElementById('response').value = JSON.stringify(data, null, 2);
+        }
+
+        async function sendMessage() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiToken').value;
+            if (!idInstance || !apiTokenInstance) return alert('Please enter both idInstance and ApiTokenInstance');
+            const message = prompt('Enter your message:');
+            const phone = prompt('Enter recipient phone number in international format (e.g., 1234567890):');
+            const response = await fetch(`${apiUrl}waInstance${idInstance}/sendMessage/${apiTokenInstance}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chatId: `${phone}@c.us`,
+                    message
+                }),
+            });
+            const data = await response.json();
+            document.getElementById('response').value = JSON.stringify(data, null, 2);
+        }
+
+        async function sendFileByUrl() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiToken').value;
+            if (!idInstance || !apiTokenInstance) return alert('Please enter both idInstance and ApiTokenInstance');
+            const fileUrl = prompt('Enter file URL to send:');
+            const phone = prompt('Enter recipient phone number in international format (e.g., 1234567890):');
+            const response = await fetch(`${apiUrl}waInstance${idInstance}/sendFileByUrl/${apiTokenInstance}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chatId: `${phone}@c.us`,
+                    urlFile: fileUrl
+                }),
+            });
+            const data = await response.json();
+            document.getElementById('response').value = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
